@@ -1,6 +1,18 @@
-# FreightCore Backend
+# Friet — FreightCore Backend
 
-Enterprise sea and air freight forwarding platform — shared backend foundation (Team Member 1).
+Enterprise sea and air freight forwarding platform — shared backend foundation.
+
+## Backend Phase Structure (`/backend`)
+
+The codebase is organized into modular phases under `backend/` for team navigation and fetch ease:
+
+- 🗄️ **`backend/database/`**: ORM models, DB session, seed scripts, Alembic migrations.
+- 🔐 **`backend/authentication/`**: JWT auth, bcrypt password hashing, TOTP MFA, RBAC permissions.
+- 🌐 **`backend/api/`**: FastAPI routers (`/v1`), HTTP middleware (correlation, rate limit, idempotency).
+- 📜 **`backend/audit_trail/`**: Append-only audit logging & sensitive field redaction.
+- 🚌 **`backend/databus/`**: Transactional outbox event service & Celery background tasks.
+- ⚙️ **`backend/rules_engine/`**: Safe declarative rules engine and condition evaluators.
+- 🔄 **`backend/workflow_engine/`**: Database-driven state machines & workflow transition history.
 
 ## Prerequisites
 
