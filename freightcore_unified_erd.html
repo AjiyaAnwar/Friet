@@ -1,0 +1,798 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>FreightCore — Unified ERD (Team 1 + Team 2 merged)</title>
+<style>
+  body {
+    margin: 0;
+    padding: 32px 16px;
+    background: #F7F6F2;
+    font-family: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    color: #2C2C2A;
+  }
+  .wrap { max-width: 1200px; margin: 0 auto; }
+  h1 {
+    text-align: center;
+    font-size: 22px;
+    font-weight: 600;
+    margin: 0 0 4px;
+  }
+  p.sub {
+    text-align: center;
+    font-size: 14px;
+    color: #5F5E5A;
+    margin: 0 0 20px;
+  }
+  .legend {
+    display: flex;
+    justify-content: center;
+    gap: 18px;
+    flex-wrap: wrap;
+    font-size: 12px;
+    color: #5F5E5A;
+    margin-bottom: 28px;
+  }
+  .legend span { display: inline-flex; align-items: center; gap: 6px; }
+  .swatch { width: 12px; height: 12px; border-radius: 3px; display: inline-block; }
+
+  .diagram-card {
+    background: #FFFFFF;
+    border: 1px solid #DEDCD3;
+    border-radius: 12px;
+    padding: 20px 22px 14px;
+    margin-bottom: 26px;
+  }
+  .diagram-card h2 { font-size: 16px; margin: 0 0 4px; }
+  .diagram-card p.desc { font-size: 13px; color: #5F5E5A; margin: 0 0 12px; }
+
+  .toolbar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+  .toolbar button {
+    width: 30px; height: 30px;
+    border-radius: 6px;
+    border: 1px solid #DEDCD3;
+    background: #F7F6F2;
+    color: #2C2C2A;
+    font-size: 16px;
+    cursor: pointer;
+    line-height: 1;
+  }
+  .toolbar button:hover { background: #EEEDE6; }
+  .toolbar .zoom-label { font-size: 12px; color: #5F5E5A; min-width: 42px; text-align: center; }
+  .toolbar .hint { font-size: 11.5px; color: #9c9b93; margin-left: 6px; }
+
+  .erd-scroll {
+    border: 1px solid #EEEDE6;
+    border-radius: 8px;
+    overflow: auto;
+    max-height: 640px;
+    background: #FFFFFF;
+    cursor: grab;
+  }
+  .erd-scroll.grabbing { cursor: grabbing; }
+  .erd-inner {
+    transform-origin: 0 0;
+    display: inline-block;
+    padding: 16px;
+  }
+  .erd-inner svg .row-rect-odd path,
+  .erd-inner svg .row-rect-odd rect,
+  .erd-inner svg .row-rect-even path,
+  .erd-inner svg .row-rect-even rect { stroke: none !important; }
+
+  .notes {
+    background: #FFFFFF;
+    border: 1px solid #DEDCD3;
+    border-radius: 12px;
+    padding: 24px 28px;
+    margin-top: 4px;
+  }
+  .notes h2 { font-size: 16px; margin: 0 0 10px; }
+  .notes h3 { font-size: 14px; margin: 18px 0 6px; }
+  .notes p, .notes li { font-size: 13.5px; line-height: 1.55; color: #3a3a37; }
+  .notes ul { margin: 0; padding-left: 20px; }
+  .notes code {
+    background: #F1EFE8;
+    padding: 1px 5px;
+    border-radius: 4px;
+    font-size: 12.5px;
+  }
+  table.dedup { width: 100%; border-collapse: collapse; margin: 8px 0 4px; font-size: 13px; }
+  table.dedup th, table.dedup td { text-align: left; padding: 6px 8px; border-bottom: 1px solid #EEEDE6; vertical-align: top; }
+  table.dedup th { color: #5F5E5A; font-weight: 600; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>FreightCore — Unified Database Schema</h1>
+  <p class="sub">Al-Rahim Group / Inter-Fret Consolidators — merged from Team 1's MVP ERD + entity priority list and Team 2's Commercial Domain ERD (FC-TEAM-002-ERD-01)</p>
+
+  <div class="legend">
+    <span><span class="swatch" style="background:#0C447C"></span>Solid box = fully modelled in this diagram</span>
+    <span><span class="swatch" style="background:#B9B7AC"></span>Header-only box = referenced from another diagram (see there for full fields)</span>
+  </div>
+
+  <div class="diagram-card">
+    <h2>Diagram 1 — Platform Core + Master &amp; Reference Data</h2>
+    <p class="desc">Tenant/User/Role (Team 1 platform layer) plus geography, currency, carrier/vessel/flight network, and lookup tables (Team 2, original Diagram 1).</p>
+    <div class="toolbar" data-target="erd1">
+      <button class="zoom-out">−</button>
+      <span class="zoom-label">100%</span>
+      <button class="zoom-in">+</button>
+      <button class="zoom-reset">Reset</button>
+      <span class="hint">drag to pan, or scroll with Ctrl held to zoom</span>
+    </div>
+    <div class="erd-scroll"><div class="erd-inner" id="erd1"></div></div>
+  </div>
+
+  <div class="diagram-card">
+    <h2>Diagram 2 — Customer, Vendor, Agent &amp; Credit</h2>
+    <p class="desc">Team 2, original Diagram 2. Encrypted fields per Team 1's column-level encryption policy are flagged inline.</p>
+    <div class="toolbar" data-target="erd2">
+      <button class="zoom-out">−</button>
+      <span class="zoom-label">100%</span>
+      <button class="zoom-in">+</button>
+      <button class="zoom-reset">Reset</button>
+      <span class="hint">drag to pan, or scroll with Ctrl held to zoom</span>
+    </div>
+    <div class="erd-scroll"><div class="erd-inner" id="erd2"></div></div>
+  </div>
+
+  <div class="diagram-card">
+    <h2>Diagram 3 — Rate / Tariff Engine</h2>
+    <p class="desc">Team 2, original Diagram 3. <code>MarginRule</code> still stands alone here — flagged below as an open question.</p>
+    <div class="toolbar" data-target="erd3">
+      <button class="zoom-out">−</button>
+      <span class="zoom-label">100%</span>
+      <button class="zoom-in">+</button>
+      <button class="zoom-reset">Reset</button>
+      <span class="hint">drag to pan, or scroll with Ctrl held to zoom</span>
+    </div>
+    <div class="erd-scroll"><div class="erd-inner" id="erd3"></div></div>
+  </div>
+
+  <div class="diagram-card">
+    <h2>Diagram 4 — Commercial Core: RFQ → Quotation → Route → Job</h2>
+    <p class="desc">Team 2, original Diagram 4 — the direct schema behind the quotation engine already built and tested. <code>Booking</code> from Team 1's original ERD is folded into <code>Job</code> here (see notes).</p>
+    <div class="toolbar" data-target="erd4">
+      <button class="zoom-out">−</button>
+      <span class="zoom-label">100%</span>
+      <button class="zoom-in">+</button>
+      <button class="zoom-reset">Reset</button>
+      <span class="hint">drag to pan, or scroll with Ctrl held to zoom</span>
+    </div>
+    <div class="erd-scroll"><div class="erd-inner" id="erd4"></div></div>
+  </div>
+
+  <div class="diagram-card">
+    <h2>Diagram 5 — Ops Execution: Job → Shipment</h2>
+    <p class="desc">Team 1's original MVP ERD, unchanged in substance — this is the part Team 2 explicitly left as an Ops-owned skeleton. <code>Job</code> now hands off here instead of the old <code>Booking</code>.</p>
+    <div class="toolbar" data-target="erd5">
+      <button class="zoom-out">−</button>
+      <span class="zoom-label">100%</span>
+      <button class="zoom-in">+</button>
+      <button class="zoom-reset">Reset</button>
+      <span class="hint">drag to pan, or scroll with Ctrl held to zoom</span>
+    </div>
+    <div class="erd-scroll"><div class="erd-inner" id="erd5"></div></div>
+  </div>
+
+  <div class="notes">
+    <h2>What changed in the merge</h2>
+    <p>Team 1's original MVP ERD (19 entities) and Team 2's Commercial Domain ERD covered overlapping ground for the "front half" of the business (customer, carrier, vendor, RFQ, quotation) but at very different levels of detail. This version keeps <strong>one</strong> definition per concept, split back into five diagrams so each one is actually legible — the same format Team 2's PDF used, just extended to cover Team 1's pieces too.</p>
+
+    <h3>Entities replaced (Team 2's richer version kept, Team 1's simpler duplicate dropped)</h3>
+    <table class="dedup">
+      <tr><th>Concept</th><th>Team 1 original (dropped)</th><th>Team 2 version (kept)</th></tr>
+      <tr><td>Customer</td><td><code>CUSTOMER</code> (id, name, credit_limit)</td><td><code>CUSTOMER</code> + <code>CustomerContact</code>, <code>CustomerAddress</code>, <code>CustomerPortalUser</code>, <code>CustomerCreditOverride</code></td></tr>
+      <tr><td>Carrier</td><td><code>CARRIER</code> (id, name, mode)</td><td><code>CARRIER</code> (scac/iata codes, NVOCC flag, hub locations) + <code>VESSEL</code>, <code>VESSEL_SCHEDULE</code>, <code>FLIGHT_SCHEDULE</code></td></tr>
+      <tr><td>Vendor</td><td><code>VENDOR</code> (id, name, service_type)</td><td><code>VENDOR</code> (encrypted tax/bank fields, performance_score) + <code>AGENT</code>, <code>AGENT_RATE_AGREEMENT</code></td></tr>
+      <tr><td>RFQ</td><td><code>RFQ</code> (id, mode, status)</td><td><code>RFQ</code> + <code>RFQ_PARTY</code>, <code>RFQ_CARGO_LINE</code>, <code>RFQ_CONTAINER_REQUIREMENT</code>, <code>RFQ_SPECIAL_REQUIREMENT</code></td></tr>
+      <tr><td>Quotation</td><td><code>QUOTATION</code> (id, total_amount, status)</td><td><code>QUOTATION</code> + <code>QUOTATION_OPTION</code>, <code>QUOTATION_LINE</code>, <code>QUOTATION_APPROVAL</code></td></tr>
+      <tr><td>Booking</td><td><code>BOOKING</code> (id, status, booked_at)</td><td>Absorbed into <code>JOB</code> — Team 2's confirmed-order record ("hands off to Shipment"). No separate Booking table; <code>Shipment.job_id</code> replaces <code>Shipment.booking_id</code>.</td></tr>
+    </table>
+
+    <h3>Entities kept from Team 1 as-is (Diagram 5 — Ops-owned; Team 2 explicitly did not model these)</h3>
+    <p><code>SHIPMENT</code>, <code>SHIPMENT_LEG</code>, <code>CONTAINER</code>, <code>CARGO</code>, <code>PACKAGE</code>, <code>TRACKING_EVENT</code>, <code>DOCUMENT</code>, <code>REVENUE_LINE</code>, <code>COST_LINE</code>, <code>INVOICE</code>. Team 2's Diagram 4 drew <code>Shipment</code> only as a one-field skeleton with the note "full model owned by Ops workstream, not Team 2" — this merge fills that skeleton in with Team 1's original fields rather than inventing a second, competing definition.</p>
+    <p>Their loose text fields were tightened to point at Team 2's new master data instead of staying free text, since that data now exists: <code>Container.container_type_code</code> → <code>ContainerType.code</code>, <code>Document.doc_type_code</code> → <code>DocumentType.code</code>, <code>RevenueLine.charge_code</code> / <code>CostLine.charge_code</code> → <code>ChargeCode.code</code>.</p>
+
+    <h3>Entities kept exactly as Team 2 defined them</h3>
+    <p>Diagram 1 (Master &amp; Reference Data), Diagram 3 (Rate/Tariff Engine), and the rest of Diagram 4 (<code>Route</code>, <code>RouteLeg</code>) — no Team 1 equivalent existed, so nothing to reconcile.</p>
+
+    <h3>Still an open question (not resolved by this merge)</h3>
+    <ul>
+      <li><strong>MarginRule</strong> — kept as its own table here, matching the current standalone implementation, but Team 2 flagged it as a candidate to instead live as rows in Team 1's generic <code>rule</code> table (domain = <code>margin_rules</code>). Needs Team 1's call before migration.</li>
+      <li><strong>Base entity convention</strong> — Team 1's own spec calls for every table to carry <code>id</code>, <code>created_at</code>, <code>updated_at</code>, <code>created_by</code>, <code>tenant_id</code>. Those are omitted from the diagrams above for readability (same as both source documents did) but should be assumed on every table.</li>
+      <li><strong>RLS</strong> — every tenant-scoped table (<code>Customer</code>, <code>RFQ</code>, <code>Quotation</code>, <code>Job</code>, <code>Shipment</code>, etc.) should carry <code>tenant_id</code> and the same row-level-security policy, per Team 1's §1.2. Not yet drawn per-table above.</li>
+      <li><strong>Route vs Shipment Leg</strong> — <code>RouteLeg</code> (Diagram 4, planning-stage: what a quotation option proposes) and <code>ShipmentLeg</code> (Diagram 5, execution-stage: what actually happened) are kept as two distinct tables on purpose, not an accidental duplicate — worth a one-line confirmation from both teams.</li>
+    </ul>
+
+    <h3>Priority-list mapping (from Team 1's entity priority doc)</h3>
+    <p>The "must-have first" / "can defer" split from Team 1's priority list still applies to the merged model — it just now maps onto the richer entities: the deferred <code>CARRIER</code>/<code>VENDOR</code>/<code>CONTAINER</code>/<code>CARGO</code>/<code>PACKAGE</code>/<code>COST_LINE</code> are still fine to build later, and everything new from Team 2 (master data, rate engine, RFQ/quotation detail tables) sits behind the same must-have anchors (<code>RFQ</code>, <code>QUOTATION</code>, <code>JOB</code>→<code>SHIPMENT</code>) it always did.</p>
+  </div>
+</div>
+
+  <script type="module">
+    import mermaid from 'https://esm.sh/mermaid@11/dist/mermaid.esm.min.mjs';
+
+    mermaid.initialize({
+      startOnLoad: false,
+      theme: 'base',
+      fontFamily: '-apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif',
+      themeVariables: {
+        darkMode: false,
+        fontSize: '14px',
+        fontFamily: '-apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif',
+        background: '#FFFFFF',
+        primaryColor: '#E6F1FB',
+        primaryBorderColor: '#185FA5',
+        primaryTextColor: '#0C447C',
+        lineColor: '#8a897f',
+        textColor: '#2C2C2A',
+        tertiaryColor: '#F1EFE8'
+      },
+    });
+
+    const source1 = `erDiagram
+  TENANT ||--o{ USER : employs
+  ROLE ||--o{ USER : assigned_to
+  COUNTRY ||--o{ LOCATION : contains
+  COUNTRY ||--o{ ZONE : contains
+  CURRENCY ||--o{ EXCHANGE_RATE : quoted_as
+  CARRIER ||--o{ VESSEL : owns
+  CARRIER ||--o{ VESSEL_SCHEDULE : operates
+  VESSEL ||--o{ VESSEL_SCHEDULE : scheduled_as
+  CARRIER ||--o{ FLIGHT_SCHEDULE : operates
+  LOCATION ||--o{ FLIGHT_SCHEDULE : departs_from
+  LOCATION ||--o{ FLIGHT_SCHEDULE : arrives_at
+
+  TENANT { uuid id PK
+    string name
+    string status }
+  USER { uuid id PK
+    uuid tenant_id FK
+    uuid role_id FK
+    string email
+    string full_name }
+  ROLE { uuid id PK
+    string name }
+  COUNTRY { uuid id PK
+    char2 iso_code
+    string name
+    string region
+    string trade_zone
+    bool is_sanctioned
+    bool requires_permit }
+  LOCATION { uuid id PK
+    string un_locode
+    string iata_code
+    string name
+    uuid country_id FK
+    string city
+    string type
+    string timezone
+    bool is_active }
+  ZONE { uuid id PK
+    string zone_code
+    string name
+    uuid country_id FK }
+  CURRENCY { string code PK
+    string name
+    string symbol }
+  EXCHANGE_RATE { uuid id PK
+    string currency_code FK
+    date rate_date
+    numeric rate_to_base
+    string source }
+  INCOTERM { string code PK
+    string name }
+  CONTAINER_TYPE { string code PK
+    numeric cbm_capacity
+    numeric max_payload_kg }
+  COMMODITY { uuid id PK
+    string hs_code
+    string name
+    bool is_dgr
+    bool export_restricted
+    bool import_restricted }
+  PACKAGE_TYPE { string code PK
+    string name }
+  ULD_TYPE { string code PK
+    string name
+    numeric volume_cbm }
+  CHARGE_CODE { string code PK
+    string name
+    string charge_type
+    string rate_basis
+    string applicable_mode }
+  DOCUMENT_TYPE { string code PK
+    string name
+    string applicable_mode }
+  CARRIER { uuid id PK
+    string carrier_type
+    string scac_code
+    string iata_code
+    string iata_prefix
+    string name
+    bool is_nvocc
+    text hub_locations }
+  VESSEL { uuid id PK
+    string imo_number
+    string name
+    string flag
+    uuid owner_carrier_id FK
+    int teu_capacity
+    string vessel_type }
+  VESSEL_SCHEDULE { uuid id PK
+    uuid carrier_id FK
+    string service_name
+    uuid vessel_id FK
+    string voyage_number
+    jsonb port_rotation
+    timestamptz cy_cutoff
+    timestamptz si_cutoff
+    timestamptz vgm_cutoff }
+  FLIGHT_SCHEDULE { uuid id PK
+    uuid carrier_id FK
+    uuid origin_location_id FK
+    uuid destination_location_id FK
+    string flight_number
+    text frequency
+    time sched_departure
+    time sched_arrival
+    interval cargo_cutoff
+    interval doc_cutoff }
+`;
+
+    const source2 = `erDiagram
+  TENANT ||--o{ CUSTOMER : onboards
+  CUSTOMER ||--o{ CUSTOMER_CONTACT : has
+  CUSTOMER ||--o{ CUSTOMER_ADDRESS : has
+  CUSTOMER ||--o{ CUSTOMER_PORTAL_USER : linked_to
+  USER ||--o{ CUSTOMER_PORTAL_USER : logs_in_as
+  CUSTOMER ||--o{ CUSTOMER_CREDIT_OVERRIDE : has
+  USER ||--o{ CUSTOMER_CREDIT_OVERRIDE : approved_by
+  CURRENCY ||--o{ CUSTOMER : credit_denominated_in
+  VENDOR ||--o{ AGENT : may_be_repped_by
+  AGENT ||--o{ AGENT_RATE_AGREEMENT : has
+  RATE ||--o{ AGENT_RATE_AGREEMENT : referenced_by
+
+  CUSTOMER { uuid id PK
+    uuid tenant_id FK
+    string customer_code
+    string name
+    string tax_registration "ENCRYPTED"
+    string registration_number
+    string iata_fiata_membership
+    decimal credit_limit_amount "ENCRYPTED"
+    string credit_limit_currency FK
+    int payment_terms_days
+    string credit_tier
+    uuid_array preferred_carrier_ids
+    jsonb preferred_lanes
+    string kyc_status
+    bool is_active
+    date onboarding_date }
+  CUSTOMER_CONTACT { uuid id PK
+    uuid customer_id FK
+    string name
+    string role
+    string email "ENCRYPTED"
+    string phone "ENCRYPTED" }
+  CUSTOMER_ADDRESS { uuid id PK
+    uuid customer_id FK
+    string address_type
+    string line1
+    string city
+    string country }
+  CUSTOMER_PORTAL_USER { uuid id PK
+    uuid customer_id FK
+    uuid user_id FK }
+  CUSTOMER_CREDIT_OVERRIDE { uuid id PK
+    uuid customer_id FK
+    string reason
+    uuid approved_by FK
+    date valid_from
+    date valid_to }
+  VENDOR { uuid id PK
+    string vendor_code
+    string name
+    string vendor_type
+    string tax_registration "ENCRYPTED"
+    jsonb bank_details "ENCRYPTED"
+    string payment_terms
+    numeric performance_score }
+  AGENT { uuid id PK
+    uuid vendor_id FK
+    string coverage_country
+    string coverage_city
+    text services_provided
+    text certifications
+    string settlement_model }
+  AGENT_RATE_AGREEMENT { uuid id PK
+    uuid agent_id FK
+    uuid rate_id FK
+    date effective_date
+    date expiry_date }
+`;
+
+    const source3 = `erDiagram
+  VENDOR ||--o{ RATE : quoted_by
+  LOCATION ||--o{ RATE : origin_of
+  LOCATION ||--o{ RATE : destination_of
+  COMMODITY ||--o{ RATE : applies_to
+  CUSTOMER ||--o{ RATE : customer_specific
+  CURRENCY ||--o{ RATE : priced_in
+  RATE ||--o{ RATE_VERSION : has
+  USER ||--o{ RATE_VERSION : modified_by
+  RATE_VERSION ||--o{ RATE_LINE : has
+  CHARGE_CODE ||--o{ RATE_LINE : uses
+  CONTAINER_TYPE ||--o{ RATE_LINE : applies_to
+  RATE_VERSION ||--o{ RATE_SURCHARGE : has
+  CHARGE_CODE ||--o{ RATE_SURCHARGE : uses
+
+  RATE { uuid id PK
+    string rate_number
+    string rate_type
+    string rate_category
+    uuid carrier_vendor_id FK
+    string service_name
+    uuid origin_location_id FK
+    uuid destination_location_id FK
+    text via_routing
+    uuid commodity_id FK
+    uuid customer_id FK
+    date effective_date
+    date expiry_date
+    string currency_code FK
+    string status }
+  RATE_VERSION { uuid id PK
+    uuid rate_id FK
+    int version_number
+    uuid modified_by FK
+    timestamptz modified_date
+    string reason
+    string approval_status }
+  RATE_LINE { uuid id PK
+    uuid rate_version_id FK
+    string charge_code FK
+    string rate_basis
+    numeric weight_break_from
+    numeric weight_break_to
+    string container_type_code FK
+    numeric amount }
+  RATE_SURCHARGE { uuid id PK
+    uuid rate_version_id FK
+    string charge_code FK
+    string basis
+    numeric amount
+    date applicable_from
+    date applicable_to }
+  MARGIN_RULE { uuid id PK
+    string service_type "open Q: merge into rule table"
+    numeric min_margin_pct
+    numeric min_margin_amount
+    jsonb customer_tier_overrides
+    jsonb lane_overrides }
+`;
+
+    const source4 = `erDiagram
+  CUSTOMER ||--o{ RFQ : submits
+  LOCATION ||--o{ RFQ : origin_of
+  LOCATION ||--o{ RFQ : destination_of
+  INCOTERM ||--o{ RFQ : applies
+  CARRIER ||--o{ RFQ : preferred_by
+  USER ||--o{ RFQ : assigned_to
+  RFQ ||--o{ RFQ_PARTY : has
+  RFQ ||--o{ RFQ_CARGO_LINE : has
+  COMMODITY ||--o{ RFQ_CARGO_LINE : classifies
+  PACKAGE_TYPE ||--o{ RFQ_CARGO_LINE : uses
+  CURRENCY ||--o{ RFQ_CARGO_LINE : valued_in
+  RFQ ||--o{ RFQ_CONTAINER_REQUIREMENT : has
+  CONTAINER_TYPE ||--o{ RFQ_CONTAINER_REQUIREMENT : requested
+  RFQ ||--o| RFQ_SPECIAL_REQUIREMENT : has
+  LOCATION ||--o{ ROUTE : origin_of
+  LOCATION ||--o{ ROUTE : destination_of
+  ROUTE ||--o{ ROUTE_LEG : has
+  LOCATION ||--o{ ROUTE_LEG : leg_from
+  LOCATION ||--o{ ROUTE_LEG : leg_to
+  CARRIER ||--o{ ROUTE_LEG : operates
+  VESSEL ||--o{ ROUTE_LEG : assigned_vessel
+  FLIGHT_SCHEDULE ||--o{ ROUTE_LEG : assigned_flight
+  RFQ ||--o{ QUOTATION : generates
+  QUOTATION ||--o{ QUOTATION : revises
+  QUOTATION ||--o{ QUOTATION_OPTION : has
+  ROUTE ||--o{ QUOTATION_OPTION : proposed_as
+  RATE_VERSION ||--o{ QUOTATION_OPTION : priced_by
+  CURRENCY ||--o{ QUOTATION_OPTION : priced_in
+  QUOTATION_OPTION ||--o{ QUOTATION_LINE : has
+  CHARGE_CODE ||--o{ QUOTATION_LINE : uses
+  RATE_VERSION ||--o{ QUOTATION_LINE : sourced_from
+  QUOTATION ||--o{ QUOTATION_APPROVAL : requires
+  USER ||--o{ QUOTATION_APPROVAL : approved_by
+  QUOTATION ||--o| JOB : accepted_as
+  CUSTOMER ||--o{ JOB : billed_to
+
+  RFQ { uuid id PK
+    string rfq_number
+    uuid customer_id FK
+    uuid origin_location_id FK
+    uuid destination_location_id FK
+    string mode
+    string service_type
+    string incoterm_code FK
+    string movement_type
+    date cargo_ready_date
+    date preferred_departure
+    date required_delivery
+    uuid preferred_carrier_id FK
+    string priority
+    string status
+    uuid assigned_to FK }
+  RFQ_PARTY { uuid id PK
+    uuid rfq_id FK
+    string party_role
+    string name
+    string address
+    string contact }
+  RFQ_CARGO_LINE { uuid id PK
+    uuid rfq_id FK
+    uuid commodity_id FK
+    string package_type_code FK
+    int packages
+    numeric gross_weight
+    numeric net_weight
+    numeric volume_cbm
+    numeric dimensions
+    numeric cargo_value
+    string currency_code FK
+    bool is_stackable
+    bool is_tiltable }
+  RFQ_CONTAINER_REQUIREMENT { uuid id PK
+    uuid rfq_id FK
+    string container_type_code FK
+    int qty
+    numeric weight_per_container
+    bool temperature_controlled
+    bool genset_required
+    string soc_coc
+    jsonb oog_dimensions }
+  RFQ_SPECIAL_REQUIREMENT { uuid id PK
+    uuid rfq_id FK
+    bool dgr_flag
+    bool temp_controlled
+    bool insurance
+    bool fumigation
+    bool inspection
+    text special_handling_codes
+    text customs_docs_required
+    bool lc_flag
+    string lc_number }
+  ROUTE { uuid id PK
+    uuid origin_location_id FK
+    uuid destination_location_id FK
+    string mode }
+  ROUTE_LEG { uuid id PK
+    uuid route_id FK
+    int sequence
+    uuid from_location_id FK
+    uuid to_location_id FK
+    uuid carrier_id FK
+    uuid vessel_id FK
+    uuid flight_id FK
+    timestamptz etd
+    timestamptz eta
+    numeric transit_time_hours
+    bool is_transshipment }
+  QUOTATION { uuid id PK
+    string quotation_number
+    uuid rfq_id FK
+    uuid parent_quotation_id FK
+    string status
+    date expiry_date
+    timestamptz sent_at }
+  QUOTATION_OPTION { uuid id PK
+    uuid quotation_id FK
+    string label
+    uuid route_id FK
+    uuid primary_rate_version_id FK
+    numeric total_cost
+    numeric total_sell
+    numeric gross_margin
+    numeric margin_pct
+    string currency_code FK
+    bool is_below_margin }
+  QUOTATION_LINE { uuid id PK
+    uuid quotation_option_id FK
+    string charge_code FK
+    string category
+    uuid rate_version_id FK
+    numeric cost_amount
+    numeric sell_amount }
+  QUOTATION_APPROVAL { uuid id PK
+    uuid quotation_id FK
+    string approval_type
+    string approver_role
+    string status
+    uuid approved_by FK
+    timestamptz approved_at }
+  JOB { uuid id PK
+    string job_number
+    uuid quotation_id FK
+    uuid customer_id FK
+    string status }
+`;
+
+    const source5 = `erDiagram
+  JOB ||--|| SHIPMENT : hands_off_to
+  CUSTOMER ||--o{ SHIPMENT : ships_for
+  SHIPMENT ||--o{ SHIPMENT : consolidates
+  SHIPMENT ||--o{ SHIPMENT_LEG : has
+  CARRIER ||--o{ SHIPMENT_LEG : operates
+  LOCATION ||--o{ SHIPMENT_LEG : leg_origin
+  LOCATION ||--o{ SHIPMENT_LEG : leg_destination
+  SHIPMENT ||--o{ CONTAINER : has
+  CONTAINER_TYPE ||--o{ CONTAINER : typed_as
+  SHIPMENT ||--o{ CARGO : has
+  CARGO ||--o{ PACKAGE : contains
+  SHIPMENT ||--o{ TRACKING_EVENT : logs
+  SHIPMENT ||--o{ DOCUMENT : attaches
+  DOCUMENT_TYPE ||--o{ DOCUMENT : typed_as
+  SHIPMENT ||--o{ REVENUE_LINE : has
+  CHARGE_CODE ||--o{ REVENUE_LINE : uses
+  SHIPMENT ||--o{ COST_LINE : has
+  VENDOR ||--o{ COST_LINE : bills
+  CHARGE_CODE ||--o{ COST_LINE : uses
+  CUSTOMER ||--o{ INVOICE : billed
+  SHIPMENT ||--o{ INVOICE : source_of
+
+  SHIPMENT { uuid id PK
+    uuid job_id FK
+    uuid customer_id FK
+    uuid master_shipment_id FK
+    string mode
+    string status }
+  SHIPMENT_LEG { uuid id PK
+    uuid shipment_id FK
+    uuid carrier_id FK
+    uuid origin_location_id FK
+    uuid destination_location_id FK
+    timestamptz etd
+    timestamptz eta }
+  CONTAINER { uuid id PK
+    uuid shipment_id FK
+    string container_no
+    string container_type_code FK }
+  CARGO { uuid id PK
+    uuid shipment_id FK
+    decimal weight
+    decimal volume }
+  PACKAGE { uuid id PK
+    uuid cargo_id FK
+    int quantity
+    decimal dimensions }
+  TRACKING_EVENT { uuid id PK
+    uuid shipment_id FK
+    string event_type
+    timestamptz event_time }
+  DOCUMENT { uuid id PK
+    uuid shipment_id FK
+    string doc_type_code FK
+    string file_url }
+  REVENUE_LINE { uuid id PK
+    uuid shipment_id FK
+    string charge_code FK
+    decimal amount }
+  COST_LINE { uuid id PK
+    uuid shipment_id FK
+    uuid vendor_id FK
+    string charge_code FK
+    decimal amount }
+  INVOICE { uuid id PK
+    uuid customer_id FK
+    uuid shipment_id FK
+    decimal amount
+    string status }
+`;
+
+    function roundCorners(container) {
+      container.querySelectorAll('.node').forEach(node => {
+        const firstPath = node.querySelector('path[d]');
+        if (!firstPath) return;
+        const d = firstPath.getAttribute('d');
+        const nums = d.match(/-?[\\d.]+/g)?.map(Number);
+        if (!nums || nums.length < 8) return;
+        const xs = [nums[0], nums[2], nums[4], nums[6]];
+        const ys = [nums[1], nums[3], nums[5], nums[7]];
+        const x = Math.min(...xs), y = Math.min(...ys);
+        const w = Math.max(...xs) - x, h = Math.max(...ys) - y;
+        const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+        rect.setAttribute('x', x); rect.setAttribute('y', y);
+        rect.setAttribute('width', w); rect.setAttribute('height', h);
+        rect.setAttribute('rx', '8');
+        for (const a of ['fill', 'stroke', 'stroke-width', 'class', 'style']) {
+          if (firstPath.hasAttribute(a)) rect.setAttribute(a, firstPath.getAttribute(a));
+        }
+        firstPath.replaceWith(rect);
+      });
+      container.querySelectorAll('.row-rect-odd path, .row-rect-even path').forEach(p => {
+        p.setAttribute('stroke', 'none');
+      });
+    }
+
+    async function renderDiagram(id, source) {
+      const { svg } = await mermaid.render(id + '-svg', source);
+      const target = document.getElementById(id);
+      target.innerHTML = svg;
+      const svgEl = target.querySelector('svg');
+      // Force natural pixel size instead of mermaid's default 100%-width shrink,
+      // so the diagram renders at full readable scale inside the scroll container.
+      svgEl.removeAttribute('style');
+      if (svgEl.viewBox && svgEl.viewBox.baseVal && svgEl.viewBox.baseVal.width) {
+        svgEl.setAttribute('width', svgEl.viewBox.baseVal.width);
+        svgEl.setAttribute('height', svgEl.viewBox.baseVal.height);
+      }
+      roundCorners(target);
+    }
+
+    await Promise.all([
+      renderDiagram('erd1', source1),
+      renderDiagram('erd2', source2),
+      renderDiagram('erd3', source3),
+      renderDiagram('erd4', source4),
+      renderDiagram('erd5', source5),
+    ]);
+
+    // Wire up zoom/pan controls for every diagram card
+    document.querySelectorAll('.diagram-card').forEach(card => {
+      const toolbar = card.querySelector('.toolbar');
+      const targetId = toolbar.dataset.target;
+      const inner = document.getElementById(targetId);
+      const scrollEl = inner.closest('.erd-scroll');
+      const label = toolbar.querySelector('.zoom-label');
+      let scale = 1;
+
+      function apply() {
+        inner.style.transform = 'scale(' + scale + ')';
+        label.textContent = Math.round(scale * 100) + '%';
+      }
+      function zoomIn() { scale = Math.min(scale * 1.2, 4); apply(); }
+      function zoomOut() { scale = Math.max(scale / 1.2, 0.15); apply(); }
+      function reset() { scale = 1; apply(); }
+
+      toolbar.querySelector('.zoom-in').addEventListener('click', zoomIn);
+      toolbar.querySelector('.zoom-out').addEventListener('click', zoomOut);
+      toolbar.querySelector('.zoom-reset').addEventListener('click', reset);
+
+      scrollEl.addEventListener('wheel', (e) => {
+        if (!e.ctrlKey) return;
+        e.preventDefault();
+        if (e.deltaY < 0) zoomIn(); else zoomOut();
+      }, { passive: false });
+
+      // drag to pan
+      let isDown = false, startX, startY, scrollLeft, scrollTop;
+      scrollEl.addEventListener('mousedown', (e) => {
+        isDown = true;
+        scrollEl.classList.add('grabbing');
+        startX = e.pageX; startY = e.pageY;
+        scrollLeft = scrollEl.scrollLeft; scrollTop = scrollEl.scrollTop;
+      });
+      window.addEventListener('mouseup', () => { isDown = false; scrollEl.classList.remove('grabbing'); });
+      scrollEl.addEventListener('mousemove', (e) => {
+        if (!isDown) return;
+        e.preventDefault();
+        scrollEl.scrollLeft = scrollLeft - (e.pageX - startX);
+        scrollEl.scrollTop = scrollTop - (e.pageY - startY);
+      });
+
+      apply();
+    });
+  </script>
+</body>
+</html>
