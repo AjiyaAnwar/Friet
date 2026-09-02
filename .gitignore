@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 .env
 .venv/
 venv/
@@ -16,3 +17,10 @@ htmlcov/
 .DS_Store
 .idea/
 .vscode/
+=======
+﻿__pycache__/
+*.pyc
+.venv/
+venv/
+.env
+>>>>>>> origin/team2/phase-2
