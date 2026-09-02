@@ -35,11 +35,11 @@ class Country:
 @dataclass
 class Location:
     name: str
-    country_id: str
-    city: str
-    type: str  # "SEA_PORT", "AIRPORT", "ICD", "CFS"
-    un_locode: str | None = None  # e.g. "PKKAR", "AEJEA"
-    iata_code: str | None = None  # e.g. "KHI", "DXB"
+    country_id: str | None = None
+    city: str = ""
+    type: str = ""
+    un_locode: str | None = None
+    iata_code: str | None = None
     timezone: str = "UTC"
     is_active: bool = True
     id: str = field(default_factory=generate_uuid)
