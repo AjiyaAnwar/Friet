@@ -137,9 +137,20 @@ def test_rfq_and_quotation_lifecycle():
 
 def test_database_unavailable_returns_500():
     """Verify Section 7 production rule: when real DB is offline, returns clear 500 error."""
-    app.dependency_overrides.clear()
+    from sqlalchemy.exc import OperationalError
+
+    async def simulate_db_offline():
+        raise OperationalError(
+            "Connection refused",
+            params=None,
+            orig=ConnectionRefusedError("Unable to connect to PostgreSQL server at localhost:5432"),
+        )
+        yield
+
+    app.dependency_overrides[get_db] = simulate_db_offline
     res = client.post("/api/v1/admin/countries", json={
         "iso_code": "US", "name": "United States", "region": "Americas", "trade_zone": "NAFTA",
     })
     assert res.status_code == 500
     assert res.json()["type"] == "https://freightcore/errors/internal-error"
+    app.dependency_overrides[get_db] = override_get_db

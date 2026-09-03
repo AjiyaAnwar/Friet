@@ -1,6 +1,7 @@
 """API v1 endpoint modules."""
 
 from app.api.v1.endpoints import (
+    analytics,
     audit,
     auth,
     commercial_calculations,
@@ -8,6 +9,7 @@ from app.api.v1.endpoints import (
     commercial_quotations,
     commercial_rates,
     commercial_rfqs,
+    financial,
     health,
     rules,
     search,
@@ -17,6 +19,7 @@ from app.api.v1.endpoints import (
 )
 
 __all__ = [
+    "analytics",
     "audit",
     "auth",
     "commercial_calculations",
@@ -24,6 +27,7 @@ __all__ = [
     "commercial_quotations",
     "commercial_rates",
     "commercial_rfqs",
+    "financial",
     "health",
     "rules",
     "search",

@@ -3,6 +3,7 @@
 from fastapi import APIRouter
 
 from app.api.v1.endpoints import (
+    analytics,
     audit,
     auth,
     commercial_calculations,
@@ -10,6 +11,7 @@ from app.api.v1.endpoints import (
     commercial_quotations,
     commercial_rates,
     commercial_rfqs,
+    financial,
     health,
     rules,
     search,
@@ -35,6 +37,10 @@ api_router.include_router(commercial_rates.router, tags=["commercial-rates"])
 api_router.include_router(commercial_calculations.router, tags=["commercial-calculations"])
 api_router.include_router(commercial_rfqs.router, tags=["commercial-rfqs"])
 api_router.include_router(commercial_quotations.router, tags=["commercial-quotations"])
+
+# Commercial Financial Integrity (Phase 5) and Commercial Analytics (Phase 7)
+api_router.include_router(financial.router, tags=["commercial-financial"])
+api_router.include_router(analytics.router, tags=["commercial-analytics"])
 
 # Also alias under /commercial for backward compatibility
 api_router.include_router(
