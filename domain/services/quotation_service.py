@@ -1,4 +1,4 @@
-﻿"""
+"""
 Commercial Quotation Service (Team 2).
 
 Generates multi-option quotations, evaluates margin rules with lane/tier overrides,
@@ -12,7 +12,7 @@ from domain.entities import (
     Quotation, QuotationOption, QuotationLine, QuotationStatus, QuotationApproval,
     Rfq, Customer, MarginRule, ChargeCategory, Route
 )
-from calculations.quotation_engine import evaluate_margin_rules, MarginEvaluationResult
+from app.modules.commercial.calculations.quotation_engine import evaluate_margin_rules, MarginEvaluationResult
 from domain.interfaces import QuotationRepositoryPort, ExchangeRatePort, RulesEnginePort
 
 

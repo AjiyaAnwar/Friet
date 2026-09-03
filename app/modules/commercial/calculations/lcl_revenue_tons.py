@@ -1,4 +1,4 @@
-﻿"""
+"""
 Sea Freight LCL Revenue Ton Calculator.
 
 - Revenue Tons (W/M) = MAX(Gross Weight kg / 1000, CBM)

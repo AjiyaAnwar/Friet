@@ -1,9 +1,9 @@
-﻿import sys
+import sys
 import os
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 import pytest
-from calculations.quotation_engine import (
+from app.modules.commercial.calculations.quotation_engine import (
     ChargeLine, ChargeCategory, build_quotation_option,
     MarginRule, evaluate_margin_rules,
 )

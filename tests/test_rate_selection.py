@@ -1,9 +1,9 @@
-﻿import sys
+import sys
 import os
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 from datetime import date
-from calculations.rate_selection import Rate, RateCategory, select_rate, compare_carrier_rates
+from app.modules.commercial.calculations.rate_selection import Rate, RateCategory, select_rate, compare_carrier_rates
 
 TODAY = date(2026, 9, 2)
 VALID_FROM = date(2026, 1, 1)

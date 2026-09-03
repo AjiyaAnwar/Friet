@@ -9,8 +9,8 @@ and after Team 1 ships Postgres (just pass in a different repository).
 from dataclasses import dataclass
 from datetime import date
 
-from ports import InMemoryRepository
-from master_data.models import Location, ExchangeRate
+from app.modules.commercial.ports import InMemoryRepository
+from app.modules.commercial.master_data.models import Location, ExchangeRate
 
 
 class MasterDataLookupService:

@@ -1,9 +1,9 @@
-﻿import sys
+import sys
 import os
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 from datetime import date
-from calculations.rfq_validation import RfqInput, validate_rfq
+from app.modules.commercial.calculations.rfq_validation import RfqInput, validate_rfq
 
 TODAY = date(2026, 9, 2)
 

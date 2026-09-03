@@ -1,4 +1,4 @@
-﻿"""
+"""
 Route Management Engine - Comparison logic.
 
     - Cheapest: total landed cost

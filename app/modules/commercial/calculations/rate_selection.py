@@ -1,4 +1,4 @@
-﻿"""
+"""
 Automatic Rate Selection Engine.
 
 Priority cascade for selecting which rate to use on a given RFQ:

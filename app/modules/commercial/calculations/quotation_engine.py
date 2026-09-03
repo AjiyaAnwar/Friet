@@ -1,4 +1,4 @@
-﻿"""
+"""
 Quotation Engine.
 
 - Each quotation option is built from charge lines (freight, surcharges,

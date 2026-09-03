@@ -1,9 +1,9 @@
-﻿import sys
+import sys
 import os
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 import pytest
-from calculations.container_utilization import calculate_container_utilization
+from app.modules.commercial.calculations.container_utilization import calculate_container_utilization
 
 
 def test_normal_utilization_no_warnings():

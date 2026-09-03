@@ -3,7 +3,7 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')
 
 import pytest
 from dataclasses import dataclass
-from ports import InMemoryRepository, ImmutableRepository
+from app.modules.commercial.ports import InMemoryRepository, ImmutableRepository
 
 
 @dataclass

@@ -15,8 +15,8 @@ engine) and are NOT implemented here.
 from dataclasses import replace
 from datetime import datetime, timezone
 
-from ports import ImmutableRepository, InMemoryRepository
-from rate_engine.models import RateVersion, RateLine
+from app.modules.commercial.ports import ImmutableRepository, InMemoryRepository
+from app.modules.commercial.rate_engine.models import RateVersion, RateLine
 
 
 class RateVersioningService:
