@@ -6,7 +6,7 @@ from logging.config import fileConfig
 from alembic import context
 from sqlalchemy import pool
 from sqlalchemy.engine import Connection
-from sqlalchemy.ext.asyncio import async_engine_from_config
+from sqlalchemy.ext.asyncio import create_async_engine
 
 from app.core.config import get_settings
 from app.db.base import Base
@@ -17,8 +17,12 @@ if config.config_file_name is not None:
     fileConfig(config.config_file_name)
 
 target_metadata = Base.metadata
-settings = get_settings()
-config.set_main_option("sqlalchemy.url", settings.database_url_sync)
+
+# Explicit connection string for your local PostgreSQL
+SYNC_DB_URL = "postgresql://postgres:hijal@localhost:5432/freightcore"
+ASYNC_DB_URL = "postgresql+asyncpg://postgres:hijal@localhost:5432/freightcore"
+
+config.set_main_option("sqlalchemy.url", SYNC_DB_URL)
 
 
 def run_migrations_offline() -> None:
@@ -40,11 +44,9 @@ def do_run_migrations(connection: Connection) -> None:
 
 
 async def run_async_migrations() -> None:
-    connectable = async_engine_from_config(
-        config.get_section(config.config_ini_section, {}),
-        prefix="sqlalchemy.",
+    connectable = create_async_engine(
+        ASYNC_DB_URL,
         poolclass=pool.NullPool,
-        url=settings.database_url_async,
     )
     async with connectable.connect() as connection:
         await connection.run_sync(do_run_migrations)

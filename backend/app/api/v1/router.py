@@ -9,6 +9,8 @@ from app.api.v1.endpoints import (
     rules,
     search,
     shipments,
+    awbs,
+    flights,
     users,
     workflows,
 )
@@ -21,4 +23,6 @@ api_router.include_router(audit.router, prefix="/audit-logs", tags=["audit"])
 api_router.include_router(workflows.router, prefix="/workflows", tags=["workflows"])
 api_router.include_router(rules.router, prefix="/rules", tags=["rules"])
 api_router.include_router(shipments.router, prefix="/shipments", tags=["shipments"])
+api_router.include_router(awbs.router, prefix="/shipments/{shipment_id}/awbs", tags=["awbs"])
+api_router.include_router(flights.router, prefix="/flights", tags=["flights"])
 api_router.include_router(search.router, prefix="/search", tags=["search"])
