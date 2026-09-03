@@ -51,6 +51,11 @@ from app.db.models.domain import (
 )
 from app.db.models.events import OutboxEvent, ProcessedEvent
 from app.db.models.financial import FinancialEntry, ReconciliationVariance
+from app.db.models.financial_integrity import (
+    AgentSettlement,
+    MarketRate,
+    VendorBillDiscrepancy,
+)
 from app.db.models.identity import (
     ApiKey,
     Branch,
@@ -95,6 +100,7 @@ __all__ = [
     "RFQ",
     "Agent",
     "AgentRateAgreement",
+    "AgentSettlement",
     "ApiKey",
     "AuditLog",
     "Booking",
@@ -132,6 +138,7 @@ __all__ = [
     "Invoice",
     "Job",
     "Location",
+    "MarketRate",
     "OutboxEvent",
     "Package",
     "PackageType",
@@ -168,6 +175,7 @@ __all__ = [
     "User",
     "UserBranchRole",
     "Vendor",
+    "VendorBillDiscrepancy",
     "Vessel",
     "VesselSchedule",
     "WorkflowInstance",
