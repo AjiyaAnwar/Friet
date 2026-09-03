@@ -1,9 +1,9 @@
-﻿import sys
+import sys
 import os
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 import pytest
-from calculations.air_freight import Package, calculate_chargeable_weight
+from app.modules.commercial.calculations.air_freight import Package, calculate_chargeable_weight
 
 
 def test_gross_weight_wins_when_dense_cargo():
@@ -44,7 +44,7 @@ def test_empty_package_list_raises_error():
 
 
 def test_pivot_weight_optimization_no_saving():
-    from calculations.air_freight import RateBreak, calculate_pivot_weight_optimization
+    from app.modules.commercial.calculations.air_freight import RateBreak, calculate_pivot_weight_optimization
     rate_breaks = [
         RateBreak(weight_break_kg=0, rate_per_kg=5.0),
         RateBreak(weight_break_kg=45, rate_per_kg=4.0),

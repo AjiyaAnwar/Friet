@@ -3,8 +3,8 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')
 
 import pytest
 from datetime import date
-from rate_engine.models import RateLine, RateSurcharge
-from rate_engine.resolution import (
+from app.modules.commercial.rate_engine.models import RateLine, RateSurcharge
+from app.modules.commercial.rate_engine.resolution import (
     resolve_weight_break_rate, resolve_pivot_weight_option,
     resolve_container_rate, resolve_applicable_surcharges,
     RateResolutionError,

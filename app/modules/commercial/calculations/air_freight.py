@@ -1,4 +1,4 @@
-﻿"""
+"""
 Air Freight Chargeable Weight Calculator.
 
 - Volumetric weight per piece = (L x W x H) / divisor  (default divisor: 6000)

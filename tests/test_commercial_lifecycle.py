@@ -22,7 +22,7 @@ from domain.services.rate_engine import RateEngine
 from domain.services.route_service import RouteService, CommercialRouteEvaluation
 from domain.services.quotation_service import QuotationService
 from domain.services.acceptance_service import AcceptanceService
-from calculations.air_freight import (
+from app.modules.commercial.calculations.air_freight import (
     Package, calculate_chargeable_weight, RateBreak, calculate_pivot_weight_optimization
 )
 

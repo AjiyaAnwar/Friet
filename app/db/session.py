@@ -24,6 +24,7 @@ AsyncSessionLocal = async_sessionmaker(engine, class_=AsyncSession, expire_on_co
 async def set_tenant_context(
     session: AsyncSession, tenant_id: UUID, customer_id: UUID | None = None
 ) -> None:
+    session.info["tenant_context_set"] = True
     await session.execute(
         text("SELECT set_config('app.tenant_id', :tenant_id, true)"),
         {"tenant_id": str(tenant_id)},
@@ -36,8 +37,14 @@ async def set_tenant_context(
 
 
 async def reset_tenant_context(session: AsyncSession) -> None:
-    await session.execute(text("SELECT set_config('app.tenant_id', '', true)"))
-    await session.execute(text("SELECT set_config('app.customer_id', '', true)"))
+    if not session.info.get("tenant_context_set"):
+        return
+    try:
+        await session.execute(text("SELECT set_config('app.tenant_id', '', true)"))
+        await session.execute(text("SELECT set_config('app.customer_id', '', true)"))
+        session.info["tenant_context_set"] = False
+    except Exception:
+        pass
 
 
 @asynccontextmanager

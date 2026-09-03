@@ -5,7 +5,7 @@ to charge for a specific shipment.
 
 from datetime import date
 
-from rate_engine.models import RateLine, RateSurcharge
+from app.modules.commercial.rate_engine.models import RateLine, RateSurcharge
 
 
 class RateResolutionError(Exception):

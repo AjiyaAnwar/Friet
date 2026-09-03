@@ -1,9 +1,9 @@
-﻿import sys
+import sys
 import os
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 import pytest
-from calculations.lcl_revenue_tons import calculate_lcl_revenue_tons
+from app.modules.commercial.calculations.lcl_revenue_tons import calculate_lcl_revenue_tons
 
 
 def test_weight_basis_wins_for_dense_cargo():

@@ -2,9 +2,9 @@ import sys, os
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 import pytest
-from ports import InMemoryRepository
-from master_data.models import Location, Incoterm
-from master_data.services import MasterDataLookupService, LocationSearchService
+from app.modules.commercial.ports import InMemoryRepository
+from app.modules.commercial.master_data.models import Location, Incoterm
+from app.modules.commercial.master_data.services import MasterDataLookupService, LocationSearchService
 
 
 def test_lookup_by_code_success():

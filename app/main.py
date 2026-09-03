@@ -112,6 +112,7 @@ async def unhandled_error_handler(request: Request, exc: Exception) -> JSONRespo
 app.include_router(api_router, prefix=settings.api_prefix)
 
 
+@app.get("/health", include_in_schema=False)
 @app.get("/health/live", include_in_schema=False)
 async def root_live() -> dict[str, str]:
     return {"status": "ok"}

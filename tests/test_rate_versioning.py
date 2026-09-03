@@ -5,9 +5,9 @@ import pytest
 from datetime import datetime
 from itertools import count
 
-from ports import ImmutableRepository
-from rate_engine.models import RateLine
-from rate_engine.versioning import RateVersioningService
+from app.modules.commercial.ports import ImmutableRepository
+from app.modules.commercial.rate_engine.models import RateLine
+from app.modules.commercial.rate_engine.versioning import RateVersioningService
 
 
 def make_service():

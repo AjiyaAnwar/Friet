@@ -3,9 +3,9 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')
 
 import pytest
 from datetime import date
-from ports import InMemoryRepository
-from master_data.models import ExchangeRate
-from master_data.services import (
+from app.modules.commercial.ports import InMemoryRepository
+from app.modules.commercial.master_data.models import ExchangeRate
+from app.modules.commercial.master_data.services import (
     CurrencyConversionService, CurrencyConversionError,
     FXLockingService, calculate_fx_gain_loss,
 )

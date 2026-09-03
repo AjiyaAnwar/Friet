@@ -5,7 +5,7 @@ Rate Expiry Monitoring.
 from dataclasses import dataclass
 from datetime import date
 
-from rate_engine.models import Rate
+from app.modules.commercial.rate_engine.models import Rate
 
 
 @dataclass

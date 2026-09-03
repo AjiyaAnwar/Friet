@@ -1,4 +1,4 @@
-﻿"""
+"""
 RFQ Validation Rules.
 
 - Mode-specific mandatory fields (container type for FCL, dimensions for LCL/Air)

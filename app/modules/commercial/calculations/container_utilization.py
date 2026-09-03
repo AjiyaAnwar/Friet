@@ -1,4 +1,4 @@
-﻿"""
+"""
 Sea Freight FCL Container Utilization Calculator.
 
 - Volume utilization = (Total CBM / Container CBM capacity) x 100%

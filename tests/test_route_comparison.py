@@ -1,8 +1,8 @@
-﻿import sys
+import sys
 import os
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-from calculations.route_comparison import Route, RouteLeg, compare_routes
+from app.modules.commercial.calculations.route_comparison import Route, RouteLeg, compare_routes
 
 
 def make_route(**overrides):

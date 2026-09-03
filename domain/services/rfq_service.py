@@ -1,4 +1,4 @@
-﻿"""
+"""
 RFQ Service (Commercial Domain).
 
 Handles RFQ capture, dynamic field validation, assignment, and lifecycle management.
@@ -8,7 +8,7 @@ from __future__ import annotations
 
 from datetime import date
 from domain.entities import Rfq, RfqStatus, PartyRole
-from calculations.rfq_validation import validate_rfq, ValidationResult
+from app.modules.commercial.calculations.rfq_validation import validate_rfq, ValidationResult
 from domain.interfaces import RfqRepositoryPort, MasterDataRepositoryPort
 
 
