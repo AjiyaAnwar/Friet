@@ -311,7 +311,7 @@ async def test_agent_settlement_calculates_with_active_rate():
 @pytest.mark.asyncio
 async def test_agent_settlement_fails_for_wrong_tenant():
     """Agent belonging to Tenant B cannot be settled by Tenant A."""
-    session = AsyncMock()
+    session = make_mock_session()
     # Agent query returns None (not found for TENANT_A)
     mock_res = MagicMock()
     mock_res.scalar_one_or_none.return_value = None
@@ -337,7 +337,7 @@ async def test_agent_settlement_fails_for_wrong_tenant():
 @pytest.mark.asyncio
 async def test_quarterly_rate_review_detects_competitiveness_and_expiry():
     """Quarterly review compares contracted rates against market benchmarks and flags expiring rates."""
-    session = AsyncMock()
+    session = make_mock_session()
 
     # Rate 1: $100 vs market $120 -> BELOW_MARKET (competitive)
     rate1 = Rate(

@@ -6,13 +6,31 @@ from fastapi.testclient import TestClient
 from app.main import app
 from app.db.session import get_db
 
+import uuid
+from app.api.dependencies import CurrentUser, get_current_user
+
+TEST_USER = CurrentUser(
+    id=uuid.UUID("11111111-1111-1111-1111-111111111111"),
+    tenant_id=uuid.UUID("22222222-2222-2222-2222-222222222222"),
+    customer_id=None,
+    permissions={
+        "rate:create", "rate:read", "quotation:read", "quotation:approve", "finance:read", "audit:read"
+    },
+    roles={"SUPER_ADMIN"},
+    is_portal=False,
+)
+
 async def override_get_db():
     """Test double override providing session=None for fast offline API schema validation."""
     yield None
 
+async def override_get_current_user():
+    return TEST_USER
+
 @pytest.fixture(autouse=True)
 def setup_test_db():
     app.dependency_overrides[get_db] = override_get_db
+    app.dependency_overrides[get_current_user] = override_get_current_user
     yield
     app.dependency_overrides.clear()
 

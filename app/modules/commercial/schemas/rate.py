@@ -13,6 +13,7 @@ class RateCreate(BaseModel):
     rate_type: str
     rate_category: str
     carrier_vendor_id: str
+    provider_type: str = "CARRIER"
     service_name: str
     origin_location_id: str
     destination_location_id: str

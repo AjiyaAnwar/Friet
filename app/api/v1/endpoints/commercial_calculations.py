@@ -21,6 +21,7 @@ class AirWeightPackageInput(BaseModel):
 
 class AirWeightRequest(BaseModel):
     packages: list[AirWeightPackageInput]
+    divisor: int = Field(default=6000, gt=0)
 
 
 class ContainerUtilizationRequest(BaseModel):
@@ -32,12 +33,13 @@ class ContainerUtilizationRequest(BaseModel):
 class LclRevenueTonsRequest(BaseModel):
     gross_weight_kg: float
     cbm: float
+    carrier_minimum_rt: float = Field(default=1.0, ge=0)
 
 
 @router.post("/calculations/air-chargeable-weight")
 async def calculate_air_chargeable_weight(payload: AirWeightRequest) -> dict[str, Any]:
     packages = [p.model_dump() for p in payload.packages]
-    result = service.calculate_air_weight(packages)
+    result = service.calculate_air_weight(packages, divisor=payload.divisor)
     return result
 
 
@@ -60,5 +62,6 @@ async def calculate_lcl_revenue_tons_endpoint(
     result = service.calculate_lcl(
         gross_weight_kg=payload.gross_weight_kg,
         cbm=payload.cbm,
+        carrier_minimum_rt=payload.carrier_minimum_rt,
     )
     return result

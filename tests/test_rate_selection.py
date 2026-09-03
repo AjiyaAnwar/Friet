@@ -56,6 +56,16 @@ def test_expired_rate_is_skipped():
     assert result.selected_rate.rate_id == "FAK1"
 
 
+def test_superseded_and_cancelled_rates_are_skipped():
+    rates = [
+        make_rate(rate_id="SUPERSEDED", status="SUPERSEDED", base_amount=1),
+        make_rate(rate_id="CANCELLED", status="CANCELLED", base_amount=1),
+        make_rate(rate_id="ACTIVE", status="ACTIVE", base_amount=500),
+    ]
+    result = select_rate("CUST-1", "PKKAR", "AEJEA", rates, today=TODAY)
+    assert result.selected_rate.rate_id == "ACTIVE"
+
+
 def test_wrong_lane_is_ignored():
     rates = [make_rate(rate_id="WRONG_LANE", origin="PKKAR", destination="USNYC", base_amount=100)]
     result = select_rate("CUST-1", "PKKAR", "AEJEA", rates, today=TODAY)

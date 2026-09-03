@@ -424,3 +424,16 @@ class Job(UUIDPrimaryKeyMixin, TenantMixin, TimestampMixin, AuditActorMixin, Bas
         UUID(as_uuid=True), ForeignKey("customers.id"), nullable=False
     )
     status: Mapped[str] = mapped_column(String(32), nullable=False, default="CREATED")
+
+
+class JobTask(UUIDPrimaryKeyMixin, TenantMixin, TimestampMixin, AuditActorMixin, Base):
+    """Initial operational tasks created atomically with an accepted quote."""
+
+    __tablename__ = "job_tasks"
+
+    job_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("jobs.id"), nullable=False, index=True
+    )
+    department: Mapped[str] = mapped_column(String(32), nullable=False)
+    task_type: Mapped[str] = mapped_column(String(64), nullable=False)
+    status: Mapped[str] = mapped_column(String(32), nullable=False, default="OPEN")

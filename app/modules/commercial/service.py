@@ -40,6 +40,15 @@ class CommercialService:
             raise NotFoundError(f"Country with ID or code '{country_id}' not found")
         return country
 
+    async def list_countries(self) -> list[dict[str, Any]]:
+        return await self.repo.list_countries()
+
+    async def credit_position(self, customer_id: str, tenant_id: uuid.UUID) -> dict[str, Any]:
+        result = await self.repo.credit_position(customer_id, tenant_id)
+        if not result:
+            raise NotFoundError(f"Customer '{customer_id}' not found")
+        return result
+
     async def create_location(self, data: dict[str, Any]) -> dict[str, Any]:
         return await self.repo.create_location(data)
 
@@ -56,6 +65,12 @@ class CommercialService:
 
     async def get_rate(self, rate_id: str) -> dict[str, Any]:
         rate = await self.repo.get_rate(rate_id)
+        if not rate:
+            raise NotFoundError(f"Rate with ID '{rate_id}' not found")
+        return rate
+
+    async def transition_rate(self, rate_id: str, to_status: str) -> dict[str, Any]:
+        rate = await self.repo.transition_rate(rate_id, to_status)
         if not rate:
             raise NotFoundError(f"Rate with ID '{rate_id}' not found")
         return rate
@@ -114,7 +129,9 @@ class CommercialService:
         }
 
     # Calculations
-    def calculate_air_weight(self, package_dicts: list[dict[str, Any]]) -> dict[str, Any]:
+    def calculate_air_weight(
+        self, package_dicts: list[dict[str, Any]], divisor: int = 6000
+    ) -> dict[str, Any]:
         packages = [
             Package(
                 gross_weight_kg=p["gross_weight_kg"],
@@ -125,7 +142,7 @@ class CommercialService:
             )
             for p in package_dicts
         ]
-        result = calculate_chargeable_weight(packages)
+        result = calculate_chargeable_weight(packages, divisor=divisor)
         return {
             "chargeable_weight_kg": result.chargeable_weight_kg,
             "gross_weight_kg": result.total_gross_weight_kg,
@@ -147,13 +164,16 @@ class CommercialService:
             "suggestions": result.suggestions,
         }
 
-    def calculate_lcl(self, gross_weight_kg: float, cbm: float) -> dict[str, Any]:
-        result = calculate_lcl_revenue_tons(gross_weight_kg, cbm)
+    def calculate_lcl(
+        self, gross_weight_kg: float, cbm: float, carrier_minimum_rt: float = 1.0
+    ) -> dict[str, Any]:
+        result = calculate_lcl_revenue_tons(gross_weight_kg, cbm, carrier_minimum_rt)
         return {
             "gross_weight_kg": result.gross_weight_kg,
             "volume_cbm": result.volume_cbm,
             "weight_metric_tons": result.weight_metric_tons,
             "revenue_tons": result.revenue_tons,
+            "billable_revenue_tons": result.billable_revenue_tons,
             "rating_basis": result.rating_basis,
             "is_minimum_applied": result.is_minimum_applied,
         }
@@ -188,10 +208,28 @@ class CommercialService:
             raise NotFoundError(f"Quotation with ID '{quotation_id}' not found")
         return quote
 
-    async def accept_quotation(
-        self, quotation_id: str, customer_id: str | None = None
+    async def send_quotation(
+        self, quotation_id: str, *, tenant_id: uuid.UUID, actor_id: uuid.UUID
     ) -> dict[str, Any]:
-        job = await self.repo.accept_quotation(quotation_id, customer_id)
+        quote = await self.repo.send_quotation(quotation_id, tenant_id, actor_id)
+        if not quote:
+            raise NotFoundError(f"Quotation with ID '{quotation_id}' not found")
+        return quote
+
+    async def accept_quotation(
+        self,
+        quotation_id: str,
+        customer_id: str | None = None,
+        *,
+        tenant_id: uuid.UUID | None = None,
+        actor_id: uuid.UUID | None = None,
+    ) -> dict[str, Any]:
+        job = await self.repo.accept_quotation(
+            quotation_id,
+            customer_id,
+            tenant_id=tenant_id,
+            actor_id=actor_id,
+        )
         if not job:
             raise NotFoundError(f"Quotation with ID '{quotation_id}' not found")
         return job

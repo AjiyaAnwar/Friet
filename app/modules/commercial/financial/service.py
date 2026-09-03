@@ -74,7 +74,9 @@ class FinancialIntegrityService:
             )
         )
         if vendor_id:
-            rate_q = rate_q.where(Rate.carrier_id == vendor_id)
+            # A contracted supplier is stored on Rate.vendor_id.  carrier_id
+            # identifies a transport carrier and must not be substituted here.
+            rate_q = rate_q.where(Rate.vendor_id == vendor_id)
         if origin_location_id:
             rate_q = rate_q.where(Rate.origin_location_id == origin_location_id)
         if destination_location_id:

@@ -39,6 +39,22 @@ class ContainerUtilizationResult:
     warnings: list[str] = field(default_factory=list)
     suggested_container_type: str | None = None
 
+    @property
+    def limiting_factor(self) -> str:
+        """The capacity dimension that constrains this loading plan."""
+        return (
+            "VOLUME"
+            if self.volume_utilization_pct >= self.weight_utilization_pct
+            else "WEIGHT"
+        )
+
+    @property
+    def suggestions(self) -> list[str]:
+        """Backward-compatible API representation of container suggestions."""
+        if not self.suggested_container_type:
+            return []
+        return [f"Consider {self.suggested_container_type}"]
+
 
 def calculate_container_utilization(
     total_cbm: float,
