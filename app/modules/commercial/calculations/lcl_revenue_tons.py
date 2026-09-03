@@ -17,6 +17,20 @@ class RevenueTonResult:
     minimum_applied: bool
     billable_revenue_tons: float
 
+    # These aliases keep the HTTP contract explicit while preserving the
+    # calculation model's concise internal terminology.
+    @property
+    def gross_weight_kg(self) -> float:
+        return round(self.weight_tons * 1000, 3)
+
+    @property
+    def rating_basis(self) -> str:
+        return self.basis
+
+    @property
+    def is_minimum_applied(self) -> bool:
+        return self.minimum_applied
+
 
 def calculate_lcl_revenue_tons(
     gross_weight_kg: float,

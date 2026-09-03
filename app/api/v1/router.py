@@ -8,9 +8,12 @@ from app.api.v1.endpoints import (
     auth,
     commercial_calculations,
     commercial_master_data,
+    commercial_parties,
     commercial_quotations,
     commercial_rates,
     commercial_rfqs,
+    commercial_routes,
+    commercial_schedules,
     financial,
     health,
     rules,
@@ -33,9 +36,12 @@ api_router.include_router(search.router, prefix="/search", tags=["search"])
 # Commercial Master Data, Rates, Calculations, RFQs, and Quotations
 # Exposed directly under /api/v1 (e.g. /api/v1/admin/countries, /api/v1/rates)
 api_router.include_router(commercial_master_data.router, tags=["commercial-master-data"])
+api_router.include_router(commercial_parties.router, tags=["commercial-parties"])
 api_router.include_router(commercial_rates.router, tags=["commercial-rates"])
 api_router.include_router(commercial_calculations.router, tags=["commercial-calculations"])
 api_router.include_router(commercial_rfqs.router, tags=["commercial-rfqs"])
+api_router.include_router(commercial_routes.router, tags=["commercial-routes"])
+api_router.include_router(commercial_schedules.router, tags=["commercial-schedules"])
 api_router.include_router(commercial_quotations.router, tags=["commercial-quotations"])
 
 # Commercial Financial Integrity (Phase 5) and Commercial Analytics (Phase 7)

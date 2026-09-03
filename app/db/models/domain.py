@@ -39,6 +39,12 @@ class Shipment(UUIDPrimaryKeyMixin, TenantMixin, TimestampMixin, AuditActorMixin
     booking_id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), ForeignKey("bookings.id"), nullable=False, unique=True
     )
+    # The booking FK is retained for backward compatibility with Team 1's
+    # existing shipment API.  Commercial acceptance also records its ERD
+    # handoff to the accepted job explicitly.
+    job_id: Mapped[uuid.UUID | None] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("jobs.id"), unique=True
+    )
     customer_id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), ForeignKey("customers.id"), nullable=False, index=True
     )
@@ -122,6 +128,8 @@ class RevenueLine(UUIDPrimaryKeyMixin, TimestampMixin, Base):
     )
     charge_code: Mapped[str] = mapped_column(Text, nullable=False)
     amount: Mapped[float] = mapped_column(Numeric(18, 4), nullable=False)
+    currency_code: Mapped[str | None] = mapped_column(String(3))
+    status: Mapped[str] = mapped_column(String(32), nullable=False, default="ESTIMATED")
 
 
 class CostLine(UUIDPrimaryKeyMixin, TimestampMixin, Base):
@@ -133,7 +141,10 @@ class CostLine(UUIDPrimaryKeyMixin, TimestampMixin, Base):
     vendor_id: Mapped[uuid.UUID | None] = mapped_column(
         UUID(as_uuid=True), ForeignKey("vendors.id")
     )
+    charge_code: Mapped[str | None] = mapped_column(Text)
     amount: Mapped[float] = mapped_column(Numeric(18, 4), nullable=False)
+    currency_code: Mapped[str | None] = mapped_column(String(3))
+    status: Mapped[str] = mapped_column(String(32), nullable=False, default="ESTIMATED")
 
 
 class Invoice(UUIDPrimaryKeyMixin, TenantMixin, TimestampMixin, Base):
