@@ -26,6 +26,16 @@ class FinancialEntry(UUIDPrimaryKeyMixin, TenantMixin, TimestampMixin, Base):
     reversal_of_id: Mapped[uuid.UUID | None] = mapped_column(
         UUID(as_uuid=True), ForeignKey("financial_entries.id")
     )
+    reversal_reason: Mapped[str | None] = mapped_column(Text)
+    approved_by: Mapped[uuid.UUID | None] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("users.id")
+    )
+    revenue_line_id: Mapped[uuid.UUID | None] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("revenue_lines.id")
+    )
+    cost_line_id: Mapped[uuid.UUID | None] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("cost_lines.id")
+    )
     status: Mapped[str] = mapped_column(String(32), nullable=False, default="POSTED")
 
 

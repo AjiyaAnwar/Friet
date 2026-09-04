@@ -18,7 +18,10 @@ from app.api.v1.endpoints import (
     eta,
     exceptions,
     financial,
+    financial_profile,
     health,
+    invoices,
+    payables,
     rules,
     search,
     shipments,
@@ -39,6 +42,9 @@ api_router.include_router(documents.router, tags=["documents"])
 api_router.include_router(tracking.router, tags=["tracking"])
 api_router.include_router(eta.router, tags=["eta-history"])
 api_router.include_router(exceptions.router, tags=["exceptions"])
+api_router.include_router(financial_profile.router, tags=["financial-profile"])
+api_router.include_router(invoices.router, tags=["invoices"])
+api_router.include_router(payables.router, tags=["payables"])
 api_router.include_router(search.router, prefix="/search", tags=["search"])
 
 # Commercial Master Data, Rates, Calculations, RFQs, and Quotations

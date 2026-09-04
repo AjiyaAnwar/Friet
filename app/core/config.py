@@ -63,6 +63,7 @@ class Settings(BaseSettings):
 
     idempotency_ttl_seconds: int = Field(default=86400, alias="IDEMPOTENCY_TTL_SECONDS")
     max_request_bytes: int = Field(default=10 * 1024 * 1024, alias="MAX_REQUEST_BYTES")
+    invoice_approval_threshold: float = Field(default=5000.0, alias="INVOICE_APPROVAL_THRESHOLD")
 
     celery_broker_url: str = Field(default="redis://localhost:6379/1", alias="CELERY_BROKER_URL")
     celery_result_backend: str = Field(
