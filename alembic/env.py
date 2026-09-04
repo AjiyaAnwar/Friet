@@ -18,9 +18,9 @@ if config.config_file_name is not None:
 
 target_metadata = Base.metadata
 
-# Explicit connection string for your local PostgreSQL
-SYNC_DB_URL = "postgresql://postgres:hijal@localhost:5432/freightcore"
-ASYNC_DB_URL = "postgresql+asyncpg://postgres:hijal@localhost:5432/freightcore"
+settings = get_settings()
+SYNC_DB_URL = settings.database_url_sync
+ASYNC_DB_URL = settings.database_url_async
 
 config.set_main_option("sqlalchemy.url", SYNC_DB_URL)
 

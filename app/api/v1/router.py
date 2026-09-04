@@ -14,11 +14,15 @@ from app.api.v1.endpoints import (
     commercial_rfqs,
     commercial_routes,
     commercial_schedules,
+    documents,
+    eta,
+    exceptions,
     financial,
     health,
     rules,
     search,
     shipments,
+    tracking,
     users,
     workflows,
 )
@@ -31,6 +35,10 @@ api_router.include_router(audit.router, prefix="/audit-logs", tags=["audit"])
 api_router.include_router(workflows.router, prefix="/workflows", tags=["workflows"])
 api_router.include_router(rules.router, prefix="/rules", tags=["rules"])
 api_router.include_router(shipments.router, prefix="/shipments", tags=["shipments"])
+api_router.include_router(documents.router, tags=["documents"])
+api_router.include_router(tracking.router, tags=["tracking"])
+api_router.include_router(eta.router, tags=["eta-history"])
+api_router.include_router(exceptions.router, tags=["exceptions"])
 api_router.include_router(search.router, prefix="/search", tags=["search"])
 
 # Commercial Master Data, Rates, Calculations, RFQs, and Quotations
