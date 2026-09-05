@@ -1,7 +1,21 @@
 """Pytest configuration and fixtures."""
 
 import os
+import sys
+from pathlib import Path
 from collections.abc import AsyncGenerator
+
+# Inject project root so 'domain' and other root-level packages can be imported
+sys.path.insert(0, str(Path(__file__).parent.parent.parent.resolve()))
+
+# Test env overrides (must be set before app/config imports)
+os.environ.setdefault("JWT_SECRET_KEY", "test-jwt-secret-key-min-32-characters-long")
+os.environ.setdefault("ENCRYPTION_KEY", "test-encryption-key-for-fernet-dev-only")
+os.environ.setdefault("POSTGRES_HOST", os.getenv("TEST_POSTGRES_HOST", "localhost"))
+os.environ.setdefault("POSTGRES_USER", os.getenv("TEST_POSTGRES_USER", "freightcore"))
+os.environ.setdefault("POSTGRES_PASSWORD", os.getenv("TEST_POSTGRES_PASSWORD", "change_me_in_production"))
+os.environ.setdefault("POSTGRES_DB", os.getenv("TEST_POSTGRES_DB", "freightcore_test"))
+os.environ.setdefault("REDIS_URL", os.getenv("TEST_REDIS_URL", "redis://localhost:6379/15"))
 
 import pytest_asyncio
 from httpx import ASGITransport, AsyncClient
@@ -13,16 +27,7 @@ from app.db.base import Base
 from app.db.seed import seed_platform
 from app.main import app
 from app.modules.redis.service import redis_service
-
-# Test env overrides
-os.environ.setdefault("JWT_SECRET_KEY", "test-jwt-secret-key-min-32-characters-long")
-os.environ.setdefault("ENCRYPTION_KEY", "test-encryption-key-for-fernet-dev-only")
-os.environ["POSTGRES_HOST"] = "localhost"
-os.environ["POSTGRES_USER"] = "postgres"
-os.environ["POSTGRES_PASSWORD"] = "hijal"
-os.environ["POSTGRES_DB"] = "freightcore_test"
-os.environ.setdefault("REDIS_URL", os.getenv("TEST_REDIS_URL", "redis://localhost:6379/15"))
-
+# Clean test env overrides
 get_settings.cache_clear()
 
 
@@ -31,11 +36,15 @@ async def engine():
     settings = get_settings()
     test_engine = create_async_engine(settings.database_url_async, pool_pre_ping=True)
     async with test_engine.begin() as conn:
-        await conn.run_sync(Base.metadata.drop_all)
+        from sqlalchemy import text
+        await conn.execute(text("DROP SCHEMA public CASCADE"))
+        await conn.execute(text("CREATE SCHEMA public"))
         await conn.run_sync(Base.metadata.create_all)
     yield test_engine
     async with test_engine.begin() as conn:
-        await conn.run_sync(Base.metadata.drop_all)
+        from sqlalchemy import text
+        await conn.execute(text("DROP SCHEMA public CASCADE"))
+        await conn.execute(text("CREATE SCHEMA public"))
     await test_engine.dispose()
 
 

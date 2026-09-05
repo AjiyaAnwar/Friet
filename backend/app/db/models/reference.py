@@ -55,6 +55,7 @@ class Zone(UUIDPrimaryKeyMixin, TimestampMixin, Base):
     country_id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), ForeignKey("countries.id"), nullable=False
     )
+    cities: Mapped[list[str]] = mapped_column(JSONB, nullable=False, default=list)
 
 
 class Currency(Base):

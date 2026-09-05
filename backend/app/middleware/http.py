@@ -62,7 +62,7 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
 
         try:
             max_limit, remaining, reset = await redis_service.check_rate_limit(key, limit)
-        except RedisError:
+        except (RedisError, RuntimeError):
             return await call_next(request)
 
         response = await call_next(request)
@@ -105,7 +105,7 @@ class IdempotencyMiddleware(BaseHTTPMiddleware):
                     status_code=cached["status_code"],
                     media_type="application/json",
                 )
-        except RedisError:
+        except (RedisError, RuntimeError):
             # Redis outages fail open; semantic idempotency conflicts still propagate.
             cached = None
 
@@ -118,12 +118,15 @@ class IdempotencyMiddleware(BaseHTTPMiddleware):
                 body_json = json.loads(content.decode()) if content else {}
             except json.JSONDecodeError:
                 body_json = {"raw": content.decode()}
-            await redis_service.store_idempotency(
-                scope_key=scope,
-                request_fingerprint=fingerprint,
-                response_body=body_json,
-                status_code=response.status_code,
-            )
+            try:
+                await redis_service.store_idempotency(
+                    scope_key=scope,
+                    request_fingerprint=fingerprint,
+                    response_body=body_json,
+                    status_code=response.status_code,
+                )
+            except (RedisError, RuntimeError):
+                pass
             return Response(
                 content=content,
                 status_code=response.status_code,

@@ -3,16 +3,33 @@
 from fastapi import APIRouter
 
 from app.api.v1.endpoints import (
+    analytics,
     audit,
     auth,
+    commercial_calculations,
+    commercial_master_data,
+    commercial_parties,
+    commercial_quotations,
+    commercial_rates,
+    commercial_rfqs,
+    commercial_routes,
+    commercial_schedules,
+    documents,
+    eta,
+    exceptions,
+    financial,
+    financial_profile,
     health,
+    invoices,
+    payables,
     rules,
     search,
     shipments,
-    awbs,
-    flights,
+    tracking,
     users,
     workflows,
+    phase6,
+    phase7,
 )
 
 api_router = APIRouter()
@@ -23,6 +40,50 @@ api_router.include_router(audit.router, prefix="/audit-logs", tags=["audit"])
 api_router.include_router(workflows.router, prefix="/workflows", tags=["workflows"])
 api_router.include_router(rules.router, prefix="/rules", tags=["rules"])
 api_router.include_router(shipments.router, prefix="/shipments", tags=["shipments"])
-api_router.include_router(awbs.router, prefix="/shipments/{shipment_id}/awbs", tags=["awbs"])
-api_router.include_router(flights.router, prefix="/flights", tags=["flights"])
+api_router.include_router(documents.router, tags=["documents"])
+api_router.include_router(tracking.router, tags=["tracking"])
+api_router.include_router(eta.router, tags=["eta-history"])
+api_router.include_router(exceptions.router, tags=["exceptions"])
+api_router.include_router(financial_profile.router, tags=["financial-profile"])
+api_router.include_router(invoices.router, tags=["invoices"])
+api_router.include_router(payables.router, tags=["payables"])
 api_router.include_router(search.router, prefix="/search", tags=["search"])
+
+# Commercial Master Data, Rates, Calculations, RFQs, and Quotations
+# Exposed directly under /api/v1 (e.g. /api/v1/admin/countries, /api/v1/rates)
+api_router.include_router(commercial_master_data.router, tags=["commercial-master-data"])
+api_router.include_router(commercial_parties.router, tags=["commercial-parties"])
+api_router.include_router(commercial_rates.router, tags=["commercial-rates"])
+api_router.include_router(commercial_calculations.router, tags=["commercial-calculations"])
+api_router.include_router(commercial_rfqs.router, tags=["commercial-rfqs"])
+api_router.include_router(commercial_routes.router, tags=["commercial-routes"])
+api_router.include_router(commercial_schedules.router, tags=["commercial-schedules"])
+api_router.include_router(commercial_quotations.router, tags=["commercial-quotations"])
+
+# Commercial Financial Integrity (Phase 5) and Commercial Analytics (Phase 7)
+api_router.include_router(financial.router, tags=["commercial-financial"])
+api_router.include_router(analytics.router, tags=["commercial-analytics"])
+
+# Phase 6 & 7
+api_router.include_router(phase6.router, tags=["phase6"])
+api_router.include_router(phase7.router, tags=["phase7"])
+
+# Also alias under /commercial for backward compatibility
+api_router.include_router(
+    commercial_master_data.router,
+    prefix="/commercial",
+    tags=["commercial-master-data"],
+    include_in_schema=False,
+)
+api_router.include_router(
+    commercial_rates.router,
+    prefix="/commercial",
+    tags=["commercial-rates"],
+    include_in_schema=False,
+)
+api_router.include_router(
+    commercial_calculations.router,
+    prefix="/commercial",
+    tags=["commercial-calculations"],
+    include_in_schema=False,
+)

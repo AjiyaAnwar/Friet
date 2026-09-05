@@ -39,12 +39,16 @@ class Settings(BaseSettings):
         default="http://localhost:9200", alias="ELASTICSEARCH_URL"
     )
 
-    jwt_secret_key: str = Field(alias="JWT_SECRET_KEY")
+    jwt_secret_key: str = Field(
+        default="dev-only-change-me-use-openssl-rand-hex-32", alias="JWT_SECRET_KEY"
+    )
     jwt_algorithm: str = Field(default="HS256", alias="JWT_ALGORITHM")
     access_token_expire_minutes: int = Field(default=15, alias="ACCESS_TOKEN_EXPIRE_MINUTES")
     refresh_token_expire_days: int = Field(default=7, alias="REFRESH_TOKEN_EXPIRE_DAYS")
 
-    encryption_key: str = Field(alias="ENCRYPTION_KEY")
+    encryption_key: str = Field(
+        default="dev-only-generate-with-cryptography-fernet-generate-key", alias="ENCRYPTION_KEY"
+    )
 
     cors_origins: list[str] = Field(
         default=["http://localhost:3000"], alias="CORS_ORIGINS"
@@ -59,6 +63,7 @@ class Settings(BaseSettings):
 
     idempotency_ttl_seconds: int = Field(default=86400, alias="IDEMPOTENCY_TTL_SECONDS")
     max_request_bytes: int = Field(default=10 * 1024 * 1024, alias="MAX_REQUEST_BYTES")
+    invoice_approval_threshold: float = Field(default=5000.0, alias="INVOICE_APPROVAL_THRESHOLD")
 
     celery_broker_url: str = Field(default="redis://localhost:6379/1", alias="CELERY_BROKER_URL")
     celery_result_backend: str = Field(
@@ -78,6 +83,13 @@ class Settings(BaseSettings):
             f"postgresql+psycopg2://{self.postgres_user}:{self.postgres_password}"
             f"@{self.postgres_host}:{self.postgres_port}/{self.postgres_db}"
         )
+
+    @field_validator("debug", mode="before")
+    @classmethod
+    def parse_debug(cls, v: object) -> bool:
+        if isinstance(v, str):
+            return v.lower() in ("true", "1", "yes", "on", "t")
+        return bool(v)
 
     @field_validator("cors_origins", mode="before")
     @classmethod

@@ -8,12 +8,11 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.exceptions import NotFoundError, ValidationError
-from app.db.models.domain import Shipment, Cargo, Container, TrackingEvent
+from app.db.models.domain import Shipment
 from app.db.models.workflow import StateMachine, WorkflowInstance, WorkflowState
 from app.modules.audit.service import AuditService
 from app.modules.events.service import OutboxService
 from app.modules.workflow.service import WorkflowService
-from app.schemas.shipment import ShipmentWorkspaceResponse, CargoEntryFCL, CargoEntryAir, ShipmentTaskInfo
 
 
 class ShipmentCreate(BaseModel):
@@ -228,88 +227,3 @@ class ShipmentService:
             )
         )
         return result.scalar_one()
-
-    def _calculate_rag_status(self, shipment: Shipment) -> str:
-        # Placeholder for RAG calculation logic
-        # Could be RED (breached SLA), AMBER (approaching), GREEN (on track)
-        if shipment.status in ("CLOSED", "DELIVERED"):
-            return "GREEN"
-        return "GREEN"
-
-    async def get_workspace(
-        self,
-        *,
-        shipment_id: uuid.UUID,
-        tenant_id: uuid.UUID,
-        user_roles: list[str]
-    ) -> ShipmentWorkspaceResponse:
-        shipment = await self.repo.get(shipment_id, tenant_id)
-        if not shipment:
-            raise NotFoundError("Shipment not found")
-
-        # Fetch tracking events
-        events_result = await self.session.execute(
-            select(TrackingEvent).where(TrackingEvent.shipment_id == shipment_id).order_by(TrackingEvent.event_time.desc()).limit(5)
-        )
-        recent_events = [{"event_type": e.event_type, "event_time": e.event_time.isoformat()} for e in events_result.scalars()]
-
-        # Fetch cargo
-        cargo_result = await self.session.execute(
-            select(Cargo).where(Cargo.shipment_id == shipment_id)
-        )
-        cargo_summary = [{"id": str(c.id), "weight": float(c.weight), "volume": float(c.volume)} for c in cargo_result.scalars()]
-
-        rag_status = self._calculate_rag_status(shipment)
-        
-        financials = None
-        if "finance" in user_roles or "admin" in user_roles:
-            financials = {"total_cost": 0.0, "total_revenue": 0.0}  # Placeholder
-
-        return ShipmentWorkspaceResponse(
-            id=shipment.id,
-            tenant_id=shipment.tenant_id,
-            customer_id=shipment.customer_id,
-            booking_id=shipment.booking_id,
-            mode=shipment.mode,
-            status=shipment.status,
-            rag_status=rag_status,
-            recent_events=recent_events,
-            cargo_summary=cargo_summary,
-            financials=financials,
-            tasks=[]
-        )
-
-    async def add_cargo_fcl(self, shipment_id: uuid.UUID, tenant_id: uuid.UUID, payload: CargoEntryFCL) -> Cargo:
-        shipment = await self.repo.get(shipment_id, tenant_id)
-        if not shipment:
-            raise NotFoundError("Shipment not found")
-
-        cargo = Cargo(
-            shipment_id=shipment_id,
-            weight=payload.weight,
-            volume=payload.volume
-        )
-        self.session.add(cargo)
-        await self.session.flush()
-
-        container = Container(
-            shipment_id=shipment_id,
-            container_no=payload.container_no,
-            type=payload.type
-        )
-        self.session.add(container)
-        
-        return cargo
-
-    async def add_cargo_air(self, shipment_id: uuid.UUID, tenant_id: uuid.UUID, payload: CargoEntryAir) -> Cargo:
-        shipment = await self.repo.get(shipment_id, tenant_id)
-        if not shipment:
-            raise NotFoundError("Shipment not found")
-
-        cargo = Cargo(
-            shipment_id=shipment_id,
-            weight=payload.weight,
-            volume=payload.volume
-        )
-        self.session.add(cargo)
-        return cargo
